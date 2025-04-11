@@ -1,4 +1,4 @@
-package com.example.flutter_virtu_muse
+package com.VirtuMuse.VirtuMuse
 
 import io.flutter.embedding.android.FlutterActivity
 
