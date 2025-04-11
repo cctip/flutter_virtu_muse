@@ -3,13 +3,6 @@ description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
 
-flutter_native_splash:
-  color: "#FFFFFF"  # 背景颜色
-  image: assets/images/splash.png  # 图片路径
-  android: true
-  ios: false
-  fill: true  # 图片填充整个屏幕
-
 environment:
   sdk: ^3.7.2
 
