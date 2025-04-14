@@ -12,6 +12,7 @@ dependencies:
   flutter_native_splash: ^2.4.6
   get: ^4.7.2
   shared_preferences: ^2.1.1
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +27,9 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/images/tabbar/
+    - assets/images/humans/
+    - assets/images/themes/
+    - assets/images/spin/
 
   fonts:
     - family: Lato

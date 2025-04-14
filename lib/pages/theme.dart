@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/widgets/common.dart';
 
 class ThemePage extends StatefulWidget {
   const ThemePage({super.key});
@@ -14,14 +15,8 @@ class _ThemePageState extends State<ThemePage> with SingleTickerProviderStateMix
 
 	@override
 	Widget build(BuildContext context) {
-    return 
-    Scaffold(
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(0, kToolbarHeight, 0, 0),
-        decoration: BoxDecoration(
-          color: Color(0xffFFFFFF),
-        ),
-      )
+    return CommonPage(
+      child: Container()
     );
 	}
 }
