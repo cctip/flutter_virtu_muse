@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.4.6
+  get: ^4.7.2
+  shared_preferences: ^2.1.1
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +25,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/images/tabbar/
 
   fonts:
     - family: Outfit
