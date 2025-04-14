@@ -71,7 +71,7 @@ class HomePageState extends State<HomePage> {
 
   Widget __footerBtn() {
     return Positioned(
-      bottom: 68,
+      bottom: 100,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 64, vertical: 4),

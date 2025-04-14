@@ -29,14 +29,14 @@ class CommonPageState extends State<CommonPage> {
             __shadowRight(),
 
             Container(
-              padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
+              padding: EdgeInsets.fromLTRB(16, 32, 16, 0),
               child: Column(
                 children: [
                   __header(),
                   SizedBox(height: 20),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - 186,
+                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - 168,
                     child: widget.child,
                   )
                 ],
@@ -52,9 +52,28 @@ class CommonPageState extends State<CommonPage> {
   Widget __bgImage() {
     return Positioned(
       top: 0,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom - 60 - MediaQuery.of(context).padding.top,
-        child: Opacity(opacity: 0.8, child: Image.asset('assets/images/humans/MM_Astra.png', fit: BoxFit.cover)),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom - 60 - MediaQuery.of(context).padding.top,
+            child: Opacity(opacity: 0.9, child: Image.asset('assets/images/humans/MM_Astra.png', fit: BoxFit.cover))
+          ),
+          Positioned(
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 10, // 横向模糊强度
+                  sigmaY: 10, // 纵向模糊强度
+                ),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom - 60 - MediaQuery.of(context).padding.top,
+                ),
+              ),
+            )
+          )
+        ],
       )
     );
   }
