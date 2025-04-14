@@ -28,16 +28,15 @@ flutter:
     - assets/images/tabbar/
 
   fonts:
-    - family: Outfit
+    - family: Lato
       fonts: 
-        - asset: assets/fonts/Outfit/Outfit-VariableFont_wght.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Black.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Bold.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-ExtraBold.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-ExtraLight.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Light.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Medium.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Regular.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-SemiBold.ttf
-        - asset: assets/fonts/Outfit/static/Outfit-Thin.ttf
+        - asset: assets/fonts/Lato/Lato-Black.ttf
+        - asset: assets/fonts/Lato/Lato-BlackItalic.ttf
+        - asset: assets/fonts/Lato/Lato-Bold.ttf
+        - asset: assets/fonts/Lato/Lato-BoldItalic.ttf
+        - asset: assets/fonts/Lato/Lato-Light.ttf
+        - asset: assets/fonts/Lato/Lato-LightItalic.ttf
+        - asset: assets/fonts/Lato/Lato-Regular.ttf
+        - asset: assets/fonts/Lato/Lato-Thin.ttf
+        - asset: assets/fonts/Lato/Lato-ThinItalic.ttf
           style: italic

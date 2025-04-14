@@ -15,7 +15,7 @@ class Utils {
             Text(message, style: TextStyle(
               decoration: TextDecoration.none,
               color: Colors.white,
-              fontFamily: 'Outfit',
+              fontFamily: 'Lato',
               fontSize: 24,
               fontWeight: FontWeight.w700
             ))

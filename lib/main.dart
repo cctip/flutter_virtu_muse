@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
-        fontFamily: 'Outfit',
+        fontFamily: 'Lato',
       ),
       routes: {
         "/": (context) => IndexPage(),
