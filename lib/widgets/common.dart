@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'dart:ui';
+
+import '/controller/user.dart';
+import '/controller/domain.dart';
 
 class CommonPage extends StatefulWidget {
   const CommonPage({super.key, required this.child});
@@ -10,6 +14,56 @@ class CommonPage extends StatefulWidget {
 }
 
 class CommonPageState extends State<CommonPage> {
+  // 加速器
+  _showBooster() {
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (_) => Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Container(
+            height: 600,
+            decoration: BoxDecoration(
+              color: Color(0xFF16161A),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))
+            ),
+            child: Column(
+              children: [
+                Image.asset('assets/icons/dialog_dot.png'),
+                Image.asset('assets/icons/dialog_title.png', height: 124),
+                SizedBox(height: 16),
+                __boosterItem(icon: 'x2', text: 'Value x2 for 10 mins', love: 1),
+                __boosterItem(icon: 'x3', text: 'Value x3 for 10 mins', love: 3),
+                __boosterItem(icon: 'x4', text: 'Value x4 for 10 mins', love: 4),
+                __boosterItem(icon: 'auto', text: 'Automatic click 30/s for 5 mins', love: 8),
+                __boosterItem(icon: 'auto', text: 'Automatic click 100/s for 5 mins', love: 15),
+              ],
+            ),
+          )
+        ],
+      )
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    UserController.init();
+    DomainController.init();
+  }
+
+  _formatCount(int count, int index) {
+    final opt = ['k', 'm'];
+    if (count <= 1000) {
+      return count;
+    }
+    if (count / 1000 > 1000) {
+      return _formatCount((count / 1000).round(), index + 1);
+    }
+    return '${count/1000}${opt[index]}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,8 +117,8 @@ class CommonPageState extends State<CommonPage> {
             child: ClipRRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
-                  sigmaX: 10, // 横向模糊强度
-                  sigmaY: 10, // 纵向模糊强度
+                  sigmaX: 10 - DomainController.lockProgress.value / 10, // 横向模糊强度
+                  sigmaY: 10 - DomainController.lockProgress.value / 10, // 纵向模糊强度
                 ),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
@@ -84,6 +138,7 @@ class CommonPageState extends State<CommonPage> {
       children: [
         Stack(
           alignment: Alignment.center,
+          clipBehavior: Clip.none,
           children: [
             Container(
               width: 56,
@@ -134,8 +189,8 @@ class CommonPageState extends State<CommonPage> {
                   Row(
                     children: [
                       Image.asset('assets/icons/dimond.png', width: 22, height: 22),
-                      SizedBox(width: 8),
-                      Text('0', style: TextStyle(color: Colors.white, fontSize: 12))
+                      SizedBox(width: 2),
+                      Obx(() => Text('${_formatCount(UserController.diamondTotal.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 12)))
                     ],
                   )
                 ],
@@ -156,13 +211,14 @@ class CommonPageState extends State<CommonPage> {
               children: [
                 Image.asset('assets/icons/Love.png', width: 32),
                 SizedBox(width: 8),
-                Text('0', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600))
+                Obx(() => Text('${UserController.love.value}', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)))
               ],
             ),
           ),
         ),
         SizedBox(width: 24),
         GestureDetector(
+          onTap: _showBooster,
           child: Container(
             width: 56,
             height: 56,
@@ -176,6 +232,44 @@ class CommonPageState extends State<CommonPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget __boosterItem({required final icon, required final text, required final love}) {
+    return Container(
+      height: 56,
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.only(top: 16, left: 16, right: 16),
+      decoration: BoxDecoration(
+        color: Color(0xFF232429),
+        borderRadius: BorderRadius.circular(16)
+      ),
+      child: Row(
+        children: [
+          Image.asset('assets/icons/rocket_$icon.png', width: 40),
+          SizedBox(width: 8),
+          Expanded(child: Text('$text', style: TextStyle(color: Colors.white))),
+          SizedBox(
+            width: 72,
+            height: 32,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(0),
+                backgroundColor: Color(0xFFFF006C),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              ),
+              onPressed: (){},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/icons/Love.png', width: 24),
+                  Text('${love}k', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600))
+                ],
+              )
+            ),
+          )
+        ],
+      ),
     );
   }
 

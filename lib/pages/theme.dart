@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '/widgets/common.dart';
 import '/controller/user.dart';
 
@@ -39,62 +40,51 @@ class _ThemePageState extends State<ThemePage> with SingleTickerProviderStateMix
           SliverToBoxAdapter(
             child: Container(
               padding: EdgeInsets.only(bottom: 72),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              child: Stack(
                 children: [
-                  Container(
-                    width: 24,
-                    height: 1104,
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 1104,
-                          color: Color(0xFF232429),
-                        ),
-                        Positioned(
-                          bottom: UserController.level.value * 18,
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFF006C),
-                                borderRadius: BorderRadius.circular(12)
-                              ),
-                            ),
-                          )
-                        ),
-                        __levelDot(level: 0),
-                        __levelDot(level: 20),
-                        __levelDot(level: 40),
-                        __levelDot(level: 60),
-                        __levelDot(level: 80),
-                        __levelDot(level: 100),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(child: Column(
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      __themeBox('Ethereal Dreams', 'ED', 100),
-                      __themeBox('Battle Angels', 'BA', 80),
-                      __themeBox('Street Vibes', 'SV', 60),
-                      __themeBox('Royal Queens', 'RQ', 40),
-                      __themeBox('Cyber Divas', 'CD', 20),
-                      __themeBox('Mystic Muses', 'MM', 0),
-                    ],
-                  )),
-                  SizedBox(width: 10)
-                ]
-              ),
+                      SizedBox(width: 48),
+                      Expanded(child: Column(
+                        children: [
+                          __themeBox('Ethereal Dreams', 'ED', 100),
+                          __themeBox('Battle Angels', 'BA', 80),
+                          __themeBox('Street Vibes', 'SV', 60),
+                          __themeBox('Royal Queens', 'RQ', 40),
+                          __themeBox('Cyber Divas', 'CD', 20),
+                          __themeBox('Mystic Muses', 'MM', 0),
+                        ],
+                      )),
+                      SizedBox(width: 10)
+                    ]
+                  ),
+                  Positioned(
+                    child: Container(
+                      width: 24,
+                      height: 1104,
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 1104,
+                            color: Color(0xFF232429),
+                          ),
+                          __levelPointer(),
+                          __levelDot(level: 0),
+                          __levelDot(level: 20),
+                          __levelDot(level: 40),
+                          __levelDot(level: 60),
+                          __levelDot(level: 80),
+                          __levelDot(level: 100),
+                        ],
+                      ),
+                    )
+                  )
+                ],
+              )
             )
           )
         ]
@@ -102,19 +92,72 @@ class _ThemePageState extends State<ThemePage> with SingleTickerProviderStateMix
     );
 	}
 
-  Widget __levelDot({required final int level, final reached}) {
+  Widget __levelPointer() {
+    return Positioned(
+      bottom: UserController.level.value / 20 * 188 + 6,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            top: 10,
+            child: Container(
+              width: 8,
+              height: UserController.level.value / 20 * 188,
+              color: Color(0xFFFF006C),
+            ),
+          ),
+          Container(
+            width: 12,
+            height: 12,
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12)
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFF006C),
+                borderRadius: BorderRadius.circular(12)
+              ),
+            ),
+          ),
+          Positioned(
+            top: 1,
+            left: 24,
+            child: Image.asset('assets/icons/pointer.png', width: 8)
+          ),
+          Positioned(
+            top: -3,
+            left: 30,
+            child: Container(
+              height: 18,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4)
+              ),
+              child: Text('Lv.${UserController.level.value}', style: TextStyle(color: Color(0xFFFF006C), fontSize: 11))
+            )
+          ),
+        ],
+      )
+    );
+  }
+  Widget __levelDot({required final int level}) {
     return Positioned(
       bottom: level / 20 * 188,
-      child: Container(
+      child: Obx(() => Container(
         width: 24,
         height: 24,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(0xFFFF006C),
+          color: UserController.level.value >= level ? Color(0xFFFF006C) : Color(0xFF232429),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Text('lv.$level', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600, overflow: TextOverflow.visible), softWrap: false),
-      )
+      ))
     );
   }
   Widget __themeBox(title, image, int limit) {
