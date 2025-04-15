@@ -136,67 +136,72 @@ class CommonPageState extends State<CommonPage> {
   Widget __header() {
     return Row(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 1),
-                borderRadius: BorderRadius.circular(56)
-              ),
-              child: ClipOval(
-                child: Image.asset('assets/images/avator.png', fit: BoxFit.cover),
-              )
-            ),
-            Positioned(
-              bottom: 1,
-              child: Container(
-                width: 48,
-                height: 18,
-                clipBehavior: Clip.antiAlias,
+        GestureDetector(
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(22, 22, 26, 0.72),
-                  borderRadius: BorderRadius.circular(10)
+                  border: Border.all(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(56)
                 ),
-                child: ClipRRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 2.0, // 横向模糊强度
-                      sigmaY: 2.0, // 纵向模糊强度
-                    ),
-                    child: Container(
-                      width: 48,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.circular(100),
+                child: ClipOval(
+                  child: Image.asset(UserController.avator.value, fit: BoxFit.cover),
+                )
+              ),
+              Positioned(
+                bottom: 1,
+                child: Container(
+                  width: 48,
+                  height: 18,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(22, 22, 26, 0.72),
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 2.0, // 横向模糊强度
+                        sigmaY: 2.0, // 纵向模糊强度
+                      ),
+                      child: Container(
+                        width: 48,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                )
+              ),
+              Positioned(
+                left: 0,
+                bottom: -1,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset('assets/icons/dimond.png', width: 22, height: 22),
+                        SizedBox(width: 2),
+                        Obx(() => Text('${_formatCount(UserController.diamondTotal.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 12)))
+                      ],
+                    )
+                  ],
+                )
               )
-            ),
-            Positioned(
-              left: 0,
-              bottom: -1,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset('assets/icons/dimond.png', width: 22, height: 22),
-                      SizedBox(width: 2),
-                      Obx(() => Text('${_formatCount(UserController.diamondTotal.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 12)))
-                    ],
-                  )
-                ],
-              )
-            )
-          ],
+            ],
+          ),
+          onTap: () {
+            Get.toNamed('/profile');
+          },
         ),
         SizedBox(width: 24),
         Expanded(

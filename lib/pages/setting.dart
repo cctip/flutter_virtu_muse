@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingView extends StatelessWidget {
-  const SettingView({super.key});
+class SettingPage extends StatelessWidget {
+  const SettingPage({super.key});
 
 	@override
 	Widget build(BuildContext context) {
@@ -23,17 +23,17 @@ class SettingView extends StatelessWidget {
           Column(
             children: [
               linkItem('Policy privacy', (){
-                launchUrl(Uri.parse('https://www.freeprivacypolicy.com/live/f8f77e38-89e6-4d25-85bb-25809cac41c9'));
+                launchUrl(Uri.parse(''));
               }),
               linkItem('Terms of service', (){
-                launchUrl(Uri.parse('https://www.freeprivacypolicy.com/live/2d59955b-496a-4833-8b7d-52266a5b8936'));
+                launchUrl(Uri.parse(''));
               }),
               // linkItem('Clear Cache', (){ Global.clear(); }),
             ],
           ),
           Spacer(),
-          Text('Version 1.0.0', style: TextStyle(color: Color.fromRGBO(249, 249, 249, 0.2), fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: kBottomNavigationBarHeight)
+          Text('Version 1.0.0', style: TextStyle(color: Color.fromRGBO(249, 249, 249, 0.8), fontSize: 14, fontWeight: FontWeight.w400)),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 16)
         ],
       ),
 		);
@@ -43,6 +43,7 @@ class SettingView extends StatelessWidget {
 Widget linkItem(text, func) {
   return Container(
     height: 58,
+    margin: EdgeInsets.only(top: 16),
     decoration: BoxDecoration(color: Colors.black),
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -61,8 +62,8 @@ Widget linkItem(text, func) {
         children: [
           Text(text, style: TextStyle(
             color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold
+            fontSize: 16,
+            fontWeight: FontWeight.w400
           )),
           Icon(Icons.arrow_forward_ios, color: Colors.white)
         ],

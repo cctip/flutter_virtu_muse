@@ -340,7 +340,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
         onPressed: (){
-          UserController.increaseLove(1);
+          UserController.increaseLove(UserController.level.value * 5);
           _shakeAnimationController.start();
           _showAnimation();
         },

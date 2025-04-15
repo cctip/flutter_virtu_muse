@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 var formater = DateFormat('yyyy-MM-dd');
 
 class UserController extends GetxController {
-  static final avator = 'assets/images/avator/1.png'.obs;
+  static final avator = 'assets/images/avator.png'.obs;
   static final level = RxInt(30);
   static final diamond = RxInt(0);
   static final diamondTotal = RxInt(0);
@@ -15,6 +15,7 @@ class UserController extends GetxController {
 
   // 初始化
   static init() {
+    avator.value = SharePref.getString('avator') ?? 'assets/images/avator.png';
     level.value = SharePref.getInt('level') ?? 1;
     diamond.value = SharePref.getInt('diamond') ?? 0;
     diamondTotal.value = SharePref.getInt('diamondTotal') ?? 0;
