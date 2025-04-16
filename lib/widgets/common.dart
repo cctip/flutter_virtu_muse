@@ -186,14 +186,14 @@ class CommonPageState extends State<CommonPage> {
 
   // 背景
   Widget __bgImage() {
-    return Positioned(
+    return Obx(() => Positioned(
       top: 0,
       child: Stack(
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom - 60 - MediaQuery.of(context).padding.top,
-            child: Opacity(opacity: 0.9, child: Image.asset('assets/images/humans/MM_Astra.png', fit: BoxFit.cover))
+            child: Opacity(opacity: 0.9, child: Image.asset('assets/images/humans/${DomainController.switchList[DomainController.switchIndex.value]}.png', fit: BoxFit.cover))
           ),
           Positioned(
             child: ClipRRect(
@@ -211,7 +211,7 @@ class CommonPageState extends State<CommonPage> {
           )
         ],
       )
-    );
+    ));
   }
 
   // 顶部
@@ -298,7 +298,7 @@ class CommonPageState extends State<CommonPage> {
               children: [
                 Image.asset('assets/icons/Love.png', width: 32),
                 SizedBox(width: 8),
-                Text('${_formatCount(UserController.love.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600))
+                Obx(() => Text('${_formatCount(UserController.love.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)))
               ],
             ),
           ),

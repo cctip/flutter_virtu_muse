@@ -1,3 +1,4 @@
+import 'package:flutter_virtu_muse/controller/domain.dart';
 import 'package:intl/intl.dart';
 import '/common/share_pref.dart';
 import 'package:get/get.dart';
@@ -40,6 +41,7 @@ class UserController extends GetxController {
     SharePref.setInt('level', level.value);
     SharePref.setInt('diamond', diamond.value);
     SharePref.setInt('diamondTotal', diamondTotal.value);
+    DomainController.initSwitch();
   }
   // 增加小心心
   static increaseLove(int value) {
