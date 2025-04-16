@@ -2,10 +2,12 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_virtu_muse/controller/booster.dart';
 import 'package:get/state_manager.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flip_card/flip_card.dart';
+import '/common/eventbus.dart';
 
 import '/controller/user.dart';
 import '/controller/domain.dart';
@@ -24,13 +26,21 @@ class HomePageState extends State<HomePage> {
   GlobalKey<FlipCardState> cardKey_3 = GlobalKey<FlipCardState>();
   Timer? _timer;
   int _remainingTime = 180;
-  bool _fliped = false;
-  bool _flipDisabled = false;
+  bool _fliped = false; // 控制单次只能翻一张牌
+  bool get _flipDisabled => DomainController.flipTimesToday > 1;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    final throttler = Throttler(duration: Duration(seconds: 1));
+    bus.on('autoClick', (_) => throttler.call(() {
+      String accelerateType = BoosterController.accelerateType.value;
+      int speed = accelerateType == 'auto30' ? 30 : 100;
+      UserController.increaseLove(UserController.level.value * 5 * speed);
+      _shakeAnimationController.start();
+      _showAnimation();
+    }));
   }
   @override
   void dispose() {
@@ -173,9 +183,6 @@ class HomePageState extends State<HomePage> {
         DomainController.flipSuccess();
         await Future.delayed(Duration(seconds: 1));
         setState(() => _fliped = false);
-        if (DomainController.flipTimesToday > 1) {
-          setState(() => _flipDisabled = true);
-        }
         _startTimer();
         Navigator.pop(context);
       },
@@ -267,8 +274,8 @@ class HomePageState extends State<HomePage> {
       children: [
         __domainItem(
           icon: 'poker',
-          text: _flipDisabled ? '_fliped' : _remainingTime > 0 ? _formatDuration() : 'Flip',
-          func: _remainingTime > 0 ? null : _onFlip
+          text: _flipDisabled ? 'Fliped' : _remainingTime > 0 ? _formatDuration() : 'Flip',
+          func: _flipDisabled || _remainingTime > 0 ? null : _onFlip
         ),
         Column(
           children: [
@@ -281,7 +288,7 @@ class HomePageState extends State<HomePage> {
     );
   }
   Widget __domainItem({required String icon, required String text, func}) {
-    bool disPoker = icon == 'poker' && _remainingTime > 0;
+    bool disPoker = icon == 'poker' && (_flipDisabled || _remainingTime > 0);
     return GestureDetector(
       onTap: func,
       child: Column(
@@ -339,12 +346,43 @@ class HomePageState extends State<HomePage> {
             Text('Tap', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600))
           ],
         ),
-        onPressed: (){
-          UserController.increaseLove(UserController.level.value * 5);
+        onPressed: () {
+          String accelerateType = BoosterController.accelerateType.value;
+          int speed = 1;
+          if (BoosterController.accelerating.value) {
+            if (accelerateType == 'auto30' || accelerateType == 'auto100') return;
+            switch(accelerateType) {
+              case 'x2': speed = 2; break;
+              case 'x3': speed = 3; break;
+              case 'x4': speed = 4; break;
+            }
+          }
+          UserController.increaseLove(UserController.level.value * 5 * speed);
           _shakeAnimationController.start();
           _showAnimation();
         },
       )
     );
+  }
+}
+
+class Throttler {
+  final Duration _duration;
+  Timer? _timer;
+  bool _isThrottled = false;
+
+  Throttler({required Duration duration}) : _duration = duration;
+
+  void call(void Function() callback) {
+    if (_isThrottled) return;
+    
+    _isThrottled = true;
+    _timer?.cancel();
+    
+    callback(); // 执行传入的回调函数
+    
+    _timer = Timer(_duration, () {
+      _isThrottled = false;
+    });
   }
 }

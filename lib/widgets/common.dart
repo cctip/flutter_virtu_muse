@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
+import '/common/eventbus.dart';
 
 import '/controller/user.dart';
 import '/controller/domain.dart';
+import '/controller/booster.dart';
 
 class CommonPage extends StatefulWidget {
   const CommonPage({super.key, required this.child});
@@ -14,6 +17,56 @@ class CommonPage extends StatefulWidget {
 }
 
 class CommonPageState extends State<CommonPage> {
+  Timer? _timer;
+  int _remainingTime = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    UserController.init();
+    DomainController.init();
+    BoosterController.init();
+    _startTimer();
+    bus.on('startTimer', (_) => _startTimer());
+  }
+
+  // 开始倒计时
+  void _startTimer() {
+    if (_timer != null && _timer!.isActive) return;
+    String startTime = BoosterController.startTime.value;
+    int sustainSeconds = BoosterController.sustainSeconds.value;
+    Duration difference = DateTime.now().difference(DateTime.parse(startTime));
+    int secondsDifference = difference.inSeconds;
+    if (secondsDifference >= sustainSeconds) {
+      _remainingTime = 0;
+    } else {
+      _remainingTime = sustainSeconds - secondsDifference;
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _calculateTime();
+        String accelerateType = BoosterController.accelerateType.value;
+        if (accelerateType == 'auto30' || accelerateType == 'auto100') {
+          bus.emit('autoClick');
+        }
+      });
+    }
+  }
+  // 计算倒计时
+  void _calculateTime() {
+    setState(() {
+      if (_remainingTime > 0) {
+        _remainingTime--;
+      } else {
+        BoosterController.initAccelerate();
+        _timer?.cancel();
+        _timer = null;
+      }
+    });
+  }
+  String _formatDuration() {
+    Duration d = Duration(seconds: _remainingTime);
+    return "${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
+  }
+
   // 加速器
   _showBooster() {
     showDialog(
@@ -28,31 +81,60 @@ class CommonPageState extends State<CommonPage> {
               color: Color(0xFF16161A),
               borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))
             ),
-            child: Column(
+            child: Obx(() => Column(
               children: [
                 Image.asset('assets/icons/dialog_dot.png'),
                 Image.asset('assets/icons/dialog_title.png', height: 124),
                 SizedBox(height: 16),
-                __boosterItem(icon: 'x2', text: 'Value x2 for 10 mins', love: 1),
-                __boosterItem(icon: 'x3', text: 'Value x3 for 10 mins', love: 3),
-                __boosterItem(icon: 'x4', text: 'Value x4 for 10 mins', love: 4),
-                __boosterItem(icon: 'auto', text: 'Automatic click 30/s for 5 mins', love: 8),
-                __boosterItem(icon: 'auto', text: 'Automatic click 100/s for 5 mins', love: 15),
+                __boosterItem(icon: 'x2', type: 'x2', text: 'Value x2 for 10 mins', love: 1, count: BoosterController.boosterCount2.value, func: () {
+                  if (BoosterController.boosterCount2.value > 0) {
+                    BoosterController.useBooster2();
+                  } else if (UserController.love >= 1000) {
+                    UserController.decreaseLove(1000);
+                    BoosterController.increaseBooster2();
+                  }
+                }),
+                __boosterItem(icon: 'x3', type: 'x3', text: 'Value x3 for 10 mins', love: 3, count: BoosterController.boosterCount3.value, func: () {
+                  if (BoosterController.boosterCount3.value > 0) {
+                    BoosterController.useBooster3();
+                  } else if (UserController.love >= 3000) {
+                    UserController.decreaseLove(3000);
+                    BoosterController.increaseBooster3();
+                  }
+                }),
+                __boosterItem(icon: 'x4', type: 'x4', text: 'Value x4 for 10 mins', love: 4, count: BoosterController.boosterCount4.value, func: () {
+                  if (BoosterController.boosterCount4.value > 0) {
+                    BoosterController.useBooster4();
+                  } else if (UserController.love >= 4000) {
+                    UserController.decreaseLove(4000);
+                    BoosterController.increaseBooster4();
+                  }
+                }),
+                __boosterItem(icon: 'auto', type: 'auto30', text: 'Automatic click 30/s for 5 mins', love: 8, count: BoosterController.boosterCount30.value, func: () {
+                  if (BoosterController.boosterCount30.value > 0) {
+                    BoosterController.useBooster30();
+                  } else if (UserController.love >= 8000) {
+                    UserController.decreaseLove(8000);
+                    BoosterController.increaseBooster30();
+                  }
+                }),
+                __boosterItem(icon: 'auto', type: 'auto100', text: 'Automatic click 100/s for 5 mins', love: 15, count: BoosterController.boosterCount100.value, func: () {
+                  if (BoosterController.boosterCount100.value > 0) {
+                    BoosterController.useBooster100();
+                  } else if (UserController.love >= 150000) {
+                    UserController.decreaseLove(15000);
+                    BoosterController.increaseBooster100();
+                  }
+                }),
               ],
-            ),
+            )),
           )
         ],
       )
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    UserController.init();
-    DomainController.init();
-  }
-
+  // 格式化数字
   _formatCount(int count, int index) {
     final opt = ['k', 'm'];
     if (count <= 1000) {
@@ -216,7 +298,7 @@ class CommonPageState extends State<CommonPage> {
               children: [
                 Image.asset('assets/icons/Love.png', width: 32),
                 SizedBox(width: 8),
-                Obx(() => Text('${UserController.love.value}', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)))
+                Text('${_formatCount(UserController.love.value, 0)}', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600))
               ],
             ),
           ),
@@ -232,15 +314,20 @@ class CommonPageState extends State<CommonPage> {
               color: Color.fromRGBO(22, 22, 26, 0.72),
               borderRadius: BorderRadius.circular(16)
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Image.asset('assets/icons/rocket.png', width: 32),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Obx(() => Image.asset(BoosterController.boosterUrl.value, width: 32)),
+                Obx(() => BoosterController.accelerating.value ? Positioned(bottom: -14, child: Text(_formatDuration(), style: TextStyle(color: Colors.white, fontSize: 10))) : Container())
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget __boosterItem({required final icon, required final text, required final love}) {
+  Widget __boosterItem({required final icon, required final text, required final love, required final int count, final type, final func}) {
     return Container(
       height: 56,
       padding: EdgeInsets.all(8),
@@ -251,10 +338,32 @@ class CommonPageState extends State<CommonPage> {
       ),
       child: Row(
         children: [
-          Image.asset('assets/icons/rocket_$icon.png', width: 40),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Image.asset('assets/icons/rocket_$icon.png', width: 40),
+              count > 0 ? Positioned(
+                left: -2,
+                child: Container(
+                  height: 14,
+                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(16)
+                  ),
+                  child: Text('$count', style: TextStyle(color: Colors.white, fontSize: 12, height: 0.8)),
+                )
+              ) : Container()
+            ],
+          ),
           SizedBox(width: 8),
           Expanded(child: Text('$text', style: TextStyle(color: Colors.white))),
-          SizedBox(
+          BoosterController.accelerating.value ?
+            BoosterController.accelerateType.value == type ?
+              Text('Accelerating', style: TextStyle(color: Color(0xFFFF006C), fontWeight: FontWeight.w600)) :
+              Container()
+            : SizedBox(
             width: 72,
             height: 32,
             child: ElevatedButton(
@@ -263,8 +372,8 @@ class CommonPageState extends State<CommonPage> {
                 backgroundColor: Color(0xFFFF006C),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               ),
-              onPressed: (){},
-              child: Row(
+              onPressed: () => func(),
+              child: count > 0 ? Text('Use', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)) : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset('assets/icons/Love.png', width: 24),

@@ -46,6 +46,11 @@ class UserController extends GetxController {
     love.value += value;
     SharePref.setInt('love', love.value);
   }
+  // 减少小心心
+  static decreaseLove(int value) {
+    love.value -= value;
+    SharePref.setInt('love', love.value);
+  }
   // 免费抽奖
   static onFreeSpin() {
     DateTime now = DateTime.now();
