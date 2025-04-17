@@ -47,15 +47,17 @@ class DomainController extends GetxController {
     '#605   Solara',
   ];
 
+  static final unlockedList = RxList<String>([]); // 已解锁
+
   static final fliped = RxBool(false); // 是否翻牌
   static final flipTimesToday = RxInt(0); // 今日翻牌次数
   static final lastFlipTime = RxString(''); // 上次翻牌时间
   static final lockProgress = RxInt(0); // 解锁进度
   static final switchList = RxList<String>(); // 所有可切换列表
-  static final switchIndex = RxInt(0);
-  static final readIndex = RxInt(0);
-  static final freeSwitch = RxBool(false);
-  static final freeSwitchTime = RxString('');
+  static final switchIndex = RxInt(0); // 当前选中下标
+  static final readIndex = RxInt(0); // 当前阅读下标
+  static final freeSwitch = RxBool(false); // 是否免费切换
+  static final freeSwitchTime = RxString(''); // 免费切换时间
 
   // 初始化
   static init() {
@@ -68,6 +70,7 @@ class DomainController extends GetxController {
     if (freeSwitchTime.value != '') {
       freeSwitch.value = freeSwitchTime.value == formater.format(DateTime.now());
     }
+    unlockedList.value = SharePref.getStringList('unlockedList') ?? [];
   }
 
   // 初始化翻牌
@@ -109,6 +112,11 @@ class DomainController extends GetxController {
     if (lockProgress.value >= 100) return;
     lockProgress.value += 10;
     SharePref.setInt('lockProgress', lockProgress.value);
+    if (lockProgress.value == 100) {
+      String curHuman = switchList[switchIndex.value];
+      unlockedList.value.add(curHuman);
+      SharePref.setStringList('unlockedList', unlockedList.value);
+    }
   }
   // 翻牌成功
   static flipSuccess() {

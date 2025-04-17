@@ -104,6 +104,7 @@ class _SpinPageState extends State<SpinPage> with SingleTickerProviderStateMixin
                               case 'auto': BoosterController.increaseBooster30(); break;
                             }
                           }
+                          UserController.onSpinSuccess();
                           Navigator.pop(context);
                         },
                         child: Text('Claim', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))

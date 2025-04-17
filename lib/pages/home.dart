@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_virtu_muse/controller/booster.dart';
 import 'package:get/state_manager.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flip_card/flip_card.dart';
 
 import '/common/eventbus.dart';
 import '/controller/user.dart';
 import '/controller/domain.dart';
+import '/controller/badge.dart';
 import '/widgets/common.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,6 +32,8 @@ class HomePageState extends State<HomePage> {
   bool get _flipDisabled => DomainController.flipTimesToday > 1;
   bool get isCur => DomainController.readIndex.value == DomainController.switchIndex.value;
   bool get isLast => DomainController.readIndex.value == DomainController.switchList.length - 1;
+  List<String> get _badgeList => BadgeController.badgeList;
+  int get _curBadgeIndex => BadgeController.curBadgeIndex.value;
 
   @override
   void initState() {
@@ -43,6 +47,8 @@ class HomePageState extends State<HomePage> {
       _shakeAnimationController.start();
       _showAnimation();
     }));
+
+    BadgeController.init();
   }
   @override
   void dispose() {
@@ -350,6 +356,207 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+  // 成就
+  _onBadge() {
+    BadgeController.initProgress();
+    showDialog(context: context, useSafeArea: false, barrierDismissible: false, builder: (_) => Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 10 - DomainController.lockProgress.value / 10, // 横向模糊强度
+              sigmaY: 10 - DomainController.lockProgress.value / 10, // 纵向模糊强度
+            ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+          ),
+        ),
+        Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 16),
+              child: Container(
+                height: 54,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.close, color: Colors.white),
+                    ),
+                    Text('Badge', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+                    SizedBox(width: 16)
+                  ],
+                ),
+              )
+            ),
+            Expanded(child: MasonryGridView.count(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 138),
+              crossAxisCount: 3, //几列
+              mainAxisSpacing: 16, // 间距
+              crossAxisSpacing: 16, // 纵向间距？
+              itemCount: _badgeList.length, // 元素个数
+              itemBuilder: (context, index) {
+                return __badgeItem(index);
+              }
+            ))
+          ],
+        ),
+        __badgeInfo()
+      ],
+    ));
+  }
+  Widget __badgeItem(index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          BadgeController.setIndex(index);
+        });
+      },
+      child: Obx(() => Container(
+        width: 122,
+        height: 122,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: _curBadgeIndex == index ? Color(0xFFFF006C) : Colors.transparent),
+          image: DecorationImage(image: AssetImage('assets/images/badge/badge_item.png'), fit: BoxFit.cover)
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset('assets/images/badge/${_badgeList[index]}.png'),
+            BadgeController.badgeClaimed[_badgeList[index]] ? Positioned(bottom: 2, child: Container(
+              width: 52,
+              height: 18,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color(0xFFFF006C),
+                borderRadius: BorderRadius.circular(12)
+              ),
+              child: Text('Owned', style: TextStyle(color: Colors.white, fontSize: 11)),
+            )): Container(),
+            BadgeController.badgeProgress[_badgeList[index]] == 100 ? Container() : Container(
+              width: 122,
+              height: 122,
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(8)
+              ),
+            )
+          ],
+        )
+      )),
+    );
+  }
+  Widget __badgeInfo() {
+    return Obx(() => Positioned(
+      bottom: MediaQuery.of(context).padding.bottom + 10,
+      child: Container(
+        width: 370,
+        height: 112,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Color(0xFF232429),
+          border: Border.all(color: Color(0xFF35363C)),
+          borderRadius: BorderRadius.circular(24)
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Reword:', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                Row(
+                  children: [
+                    Image.asset('assets/icons/dimond.png', width: 24, height: 24),
+                    SizedBox(width: 4),
+                    Text('${BadgeController.badgeRewords[_badgeList[_curBadgeIndex]]}', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600))
+                  ],
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    image: DecorationImage(image: AssetImage('assets/images/badge/badge_item.png'), fit: BoxFit.cover)
+                  ),
+                  child: Image.asset('assets/images/badge/${_badgeList[_curBadgeIndex]}.png', width: 40),
+                ),
+                SizedBox(width: 12),
+                SizedBox(
+                  width: 195,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${BadgeController.badgeInfo[_badgeList[_curBadgeIndex]]}', style: TextStyle(color: Colors.white)),
+                      SizedBox(height: 4),
+                      Container(
+                        width: 195,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF16161A),
+                          borderRadius: BorderRadius.circular(8)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 195 * BadgeController.badgeProgress[_badgeList[_curBadgeIndex]] / 100,
+                              height: 6,
+                              margin: EdgeInsets.only(top: 1),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFF006C),
+                                borderRadius: BorderRadius.circular(8)
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Spacer(),
+                SizedBox(
+                  width: 72,
+                  height: 28,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(0),
+                      foregroundColor: Colors.white,
+                      disabledForegroundColor: Color.fromRGBO(249, 249, 249, 0.8),
+                      backgroundColor: Color(0xFFFF006C),
+                      disabledBackgroundColor: Color(0xFF35363C),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    ),
+                    onPressed: BadgeController.badgeProgress[_badgeList[_curBadgeIndex]] != 100 || BadgeController.badgeClaimed[_badgeList[_curBadgeIndex]] ? null : () {
+                      BadgeController.onClaim();
+                    },
+                    child: Text(BadgeController.badgeClaimed[_badgeList[_curBadgeIndex]] ? 'Claimed' : 'Claim', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      )
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonPage(
@@ -378,7 +585,7 @@ class HomePageState extends State<HomePage> {
           children: [
             __domainItem(icon: 'switch', text: 'Switch', func: _onSwitch),
             SizedBox(height: 16),
-            __domainItem(icon: 'badge', text: 'Badge'),
+            __domainItem(icon: 'badge', text: 'Badge', func: _onBadge),
           ],
         )
       ],
@@ -454,6 +661,7 @@ class HomePageState extends State<HomePage> {
               case 'x4': speed = 4; break;
             }
           }
+          UserController.onClickLove();
           UserController.increaseLove(UserController.level.value * 5 * speed);
           _shakeAnimationController.start();
           _showAnimation();

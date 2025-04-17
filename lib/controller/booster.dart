@@ -21,6 +21,7 @@ class BoosterController extends GetxController {
   static final accelerateType = RxString(''); // 正在加速中的加速器类型
   static final startTime = RxString(''); // 开始加速时间
   static final sustainSeconds = RxInt(0); // 加速持续时间-单位s
+  static final usedCount = RxInt(0); // 使用次数
 
   // 初始化
   static init() {
@@ -35,6 +36,7 @@ class BoosterController extends GetxController {
 
   // 初始化加速状态
   static initAccelerate() {
+    usedCount.value = SharePref.getInt('SharePref') ?? 0;
     startTime.value = SharePref.getString('startTime') ?? '';
     sustainSeconds.value = SharePref.getInt('sustainSeconds') ?? 0;
     Duration difference = DateTime.now().difference(DateTime.parse(startTime.value));
@@ -107,6 +109,8 @@ class BoosterController extends GetxController {
 
   // 开始加速
   static startAccelerate(type, seconds) {
+    usedCount.value++;
+    SharePref.setInt('usedCount', usedCount.value);
     accelerateType.value = type;
     SharePref.setString('accelerateType', accelerateType.value);
     accelerating.value = true;
