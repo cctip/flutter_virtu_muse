@@ -92,17 +92,14 @@ class HomePageState extends State<HomePage> {
   
   // 翻牌
   _onFlip() {
-    showDialog(context: context, barrierDismissible: false, builder: (_) => WillPopScope(
-      onWillPop: () async => false,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(left: 0, child: __flipCard(cardKey_1)),
-          Positioned(child: __flipCard(cardKey_2)),
-          Positioned(right: 0, child: __flipCard(cardKey_3)),
-          // Positioned(top: MediaQuery.of(context).size.height / 2 + 60, child: Text(_fliped ? '' : 'Choose a card to flip', style: TextStyle(color: Colors.white, fontSize: 16)))
-        ]
-      ),
+    showDialog(context: context, barrierDismissible: false, builder: (_) => Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned(left: 0, child: __flipCard(cardKey_1)),
+        Positioned(child: __flipCard(cardKey_2)),
+        Positioned(right: 0, child: __flipCard(cardKey_3)),
+        // Positioned(top: MediaQuery.of(context).size.height / 2 + 60, child: Text(_fliped ? '' : 'Choose a card to flip', style: TextStyle(color: Colors.white, fontSize: 16)))
+      ]
     ));
   }
   Widget __flipCard(cardKey) {
@@ -114,7 +111,7 @@ class HomePageState extends State<HomePage> {
       case 1: _contentImage = 'assets/icons/dimond.png'; value = 5 * ((DomainController.lockProgress.value / 10).round() + 1); break;
       case 2: _contentImage = 'assets/images/humans/${DomainController.switchList[DomainController.switchIndex.value]}.png'; break;
     }
-    return Obx(() => FlipCard(
+    return FlipCard(
       key: cardKey,
       flipOnTouch: false,
       // fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
@@ -194,7 +191,7 @@ class HomePageState extends State<HomePage> {
         _startTimer();
         Navigator.pop(context);
       },
-    ));
+    );
   }
 
   // 切换

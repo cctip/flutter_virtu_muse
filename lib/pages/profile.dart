@@ -125,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 ),
                 SizedBox(width: 20),
                 SizedBox(
-                  width: 266,
+                  width: 260,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -149,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                         alignment: Alignment.centerLeft,
                         children: [
                           Container(
-                            width: 266,
+                            width: 260,
                             height: 12,
                             decoration: BoxDecoration(
                               color: Color(0xFF232429),
@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             ),
                           ),
                           Positioned(child: Container(
-                            width: 266 / 200 * UserController.diamond.value,
+                            width: 260 / 200 * UserController.diamond.value,
                             height: 12,
                             decoration: BoxDecoration(
                               color: Color(0xFFFF006C),

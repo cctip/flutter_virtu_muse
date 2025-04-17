@@ -59,7 +59,7 @@ class _SpinPageState extends State<SpinPage> with SingleTickerProviderStateMixin
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => WillPopScope(onWillPop: () async => false, child: Stack(
+      builder: (_) => Stack(
         alignment: Alignment.center,
         children: [
           Container(
@@ -117,7 +117,7 @@ class _SpinPageState extends State<SpinPage> with SingleTickerProviderStateMixin
             )
           )
         ],
-      ))
+      )
     );
   }
 
