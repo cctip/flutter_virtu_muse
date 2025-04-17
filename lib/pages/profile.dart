@@ -1,6 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_virtu_muse/common/utils.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '/controller/user.dart';
 import 'package:get/get.dart';
@@ -18,6 +23,23 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+  }
+
+  // 保存图片
+  _saveImage(assetPath) async {
+    // 加载Asset图片为字节数据
+    final byteData = await rootBundle.load(assetPath);
+    final bytes = byteData.buffer.asUint8List();
+    // 写入临时文件
+    final tempDir = await getTemporaryDirectory();
+    var tempFile = File('${tempDir.path}/image_${DateTime.now().millisecondsSinceEpoch}.png');
+    await tempFile.writeAsBytes(bytes);
+
+    // 保存到相册
+    final result = await ImageGallerySaver.saveFile(tempFile.path);
+    if (result['isSuccess']) {
+      Utils.toast(context, message: 'Saved to Album Successfully');
+    }
   }
 
   // 格式化数字
@@ -355,20 +377,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                                     child: Text('Set as avator', style: TextStyle(fontSize: 12))
                                   ),
                                 ),
-                                // SizedBox(
-                                //   width: 71,
-                                //   height: 22,
-                                //   child: ElevatedButton(
-                                //     style: ElevatedButton.styleFrom(
-                                //       padding: EdgeInsets.all(0),
-                                //       foregroundColor: Colors.white,
-                                //       backgroundColor: Color(0xFFFFAA00),
-                                //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                //     ),
-                                //     onPressed: () {},
-                                //     child: Text('Download', style: TextStyle(fontSize: 12))
-                                //   ),
-                                // )
+                                SizedBox(
+                                  width: 71,
+                                  height: 22,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.all(0),
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Color(0xFFFFAA00),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    ),
+                                    onPressed: () {
+                                      _saveImage('assets/images/humans/${_collectionList[index]}.png');
+                                    },
+                                    child: Text('Download', style: TextStyle(fontSize: 12))
+                                  ),
+                                )
                               ],
                             )
                           ),

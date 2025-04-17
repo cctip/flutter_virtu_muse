@@ -70,7 +70,7 @@ class DomainController extends GetxController {
     if (freeSwitchTime.value != '') {
       freeSwitch.value = freeSwitchTime.value == formater.format(DateTime.now());
     }
-    unlockedList.value = SharePref.getStringList('unlockedList') ?? [];
+    unlockedList.value = SharePref.getStringList('unlockedList') ?? ['BA_Seraph'];
   }
 
   // 初始化翻牌

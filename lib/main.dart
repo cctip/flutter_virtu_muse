@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Lato',
       ),
-      initialRoute: '/',
+      initialRoute: '/profile',
       home: IndexPage(),
       getPages: [
         GetPage(name: '/profile', page: () => ProfilePage()),
