@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'dart:ui';
 import '/common/eventbus.dart';
 
@@ -35,7 +36,9 @@ class CommonPageState extends State<CommonPage> {
     if (_timer != null && _timer!.isActive) return;
     String startTime = BoosterController.startTime.value;
     int sustainSeconds = BoosterController.sustainSeconds.value;
-    Duration difference = DateTime.now().difference(DateTime.parse(startTime));
+    if (startTime == '') return;
+    DateFormat formater = DateFormat('yyyy-MM-dd HH:mm:ss');
+    Duration difference = DateTime.now().difference(formater.parse(startTime));
     int secondsDifference = difference.inSeconds;
     if (secondsDifference >= sustainSeconds) {
       _remainingTime = 0;

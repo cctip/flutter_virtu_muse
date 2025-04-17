@@ -673,7 +673,7 @@ class HomePageState extends State<HomePage> {
 
 class Throttler {
   final Duration _duration;
-  Timer? _timer;
+  Timer? _throttlerTimer;
   bool _isThrottled = false;
 
   Throttler({required Duration duration}) : _duration = duration;
@@ -682,11 +682,11 @@ class Throttler {
     if (_isThrottled) return;
     
     _isThrottled = true;
-    _timer?.cancel();
+    _throttlerTimer?.cancel();
     
     callback(); // 执行传入的回调函数
     
-    _timer = Timer(_duration, () {
+    _throttlerTimer = Timer(_duration, () {
       _isThrottled = false;
     });
   }

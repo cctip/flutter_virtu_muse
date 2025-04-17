@@ -39,7 +39,8 @@ class BoosterController extends GetxController {
     usedCount.value = SharePref.getInt('SharePref') ?? 0;
     startTime.value = SharePref.getString('startTime') ?? '';
     sustainSeconds.value = SharePref.getInt('sustainSeconds') ?? 0;
-    Duration difference = DateTime.now().difference(DateTime.parse(startTime.value));
+    if (startTime.value == '') return;
+    Duration difference = DateTime.now().difference(formater.parse(startTime.value));
     int secondsDifference = difference.inSeconds;
     if (secondsDifference >= sustainSeconds.value) {
       accelerating.value = false;
