@@ -23,10 +23,10 @@ class SettingPage extends StatelessWidget {
           Column(
             children: [
               linkItem('Policy privacy', (){
-                launchUrl(Uri.parse(''));
+                launchUrl(Uri.parse('freeprivacypolicy.com/live/0b5f8ca8-d7d0-4a47-9798-ce70518c5a67'));
               }),
               linkItem('Terms of service', (){
-                launchUrl(Uri.parse(''));
+                launchUrl(Uri.parse('https://www.freeprivacypolicy.com/live/5b24cde1-cb6b-44e8-a530-4dffc2286408'));
               }),
               // linkItem('Clear Cache', (){ Global.clear(); }),
             ],
