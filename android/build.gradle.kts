@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+implementation 'com.appsflyer:af-android-sdk:6.9.0' :cite[6]
 
 allprojects {
     repositories {
