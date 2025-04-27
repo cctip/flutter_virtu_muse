@@ -4,6 +4,20 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/cctip/aflib")
+            credentials {
+                username = findProperty("gpr_user") as String
+                password = findProperty("gpr_key") as String
+            }
+        }
+        maven {
+            url = uri("https://maven.pkg.github.com/cctip/v2ray")
+            credentials {
+                username = findProperty("gpr_user") as String
+                password = findProperty("gpr_key") as String
+            }
+        }
     }
 }
 

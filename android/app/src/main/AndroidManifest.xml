@@ -5,7 +5,7 @@
     
     <application
         android:label="VirtuMuse"
-        android:name="${applicationName}"
+        android:name=".App"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

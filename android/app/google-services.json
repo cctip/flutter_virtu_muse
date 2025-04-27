@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55401185800",
+    "project_id": "vertumuse",
+    "storage_bucket": "vertumuse.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55401185800:android:7dbfa332379bb3535fc7bd",
+        "android_client_info": {
+          "package_name": "com.VirtuMuse.VirtuMuse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC01D8vbZ8dBwHxjod6tW3Ejkkgja0rE0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
