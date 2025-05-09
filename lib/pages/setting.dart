@@ -32,7 +32,7 @@ class SettingPage extends StatelessWidget {
             ],
           ),
           Spacer(),
-          Text('Version 1.0.0', style: TextStyle(color: Color.fromRGBO(249, 249, 249, 0.8), fontSize: 14, fontWeight: FontWeight.w400)),
+          Text('Version 1.1.0', style: TextStyle(color: Color.fromRGBO(249, 249, 249, 0.8), fontSize: 14, fontWeight: FontWeight.w400)),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 16)
         ],
       ),
